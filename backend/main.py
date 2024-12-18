@@ -16,10 +16,10 @@ users_collection = db["Users"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Frontend URL (React app)
+    allow_origins=["http://localhost:3000"],  
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"], 
+    allow_headers=["*"], 
 )
 
 user_messages = deque(maxlen=7)  
@@ -108,19 +108,14 @@ async def chatbot_endpoint(request: ChatRequest):
             conversation_history[user_messages[i]] = chatbot_responses[i]
         bot_retrieval_chain_response = chatbot.retrieval_chain(conversation_history, user_message)
         bot_response = chatbot.response_chain(user_message, bot_retrieval_chain_response, conversation_history)
-        # print(user_message, bot_response)
         
         chatbot_responses.append(bot_response)
         user_messages.append(user_message)
         ids = []
         ids = chatbot.extract_by_keyword(bot_retrieval_chain_response)
         
-        print(ids)
-        # ids = ['67376e0cfd76308feadf7950', '67376e20fd76308feadf796d', '67376e22fd76308feadf7971', '67376dc9fd76308feadf78e1', '67376e03fd76308feadf7940', '67376e0dfd76308feadf7952']
         print(conversation_history)
-        return {"response": bot_retrieval_chain_response, "ids": ids}
-        # return {"response": "HI", "ids": ids}
-        # return {"response": "frontend/public/logo192.png"}
+        return {"response": bot_response, "ids": ids}
     except Exception as e:
         return {"response": f"Error: {str(e)}"}
 
